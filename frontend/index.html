@@ -1,0 +1,501 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Your Name</title>
+
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Chatbot stylesheet -->
+    <link rel="stylesheet" href="css/chatbot.css">
+</head>
+
+<body>
+
+    <!-- Cursor Glow -->
+    <div id="cursor-glow"></div>
+
+    <!-- Animated Constellation Background -->
+    <canvas id="constellation-bg"></canvas>
+
+
+    <!-- =========================
+         HERO / NAVIGATION
+         ========================= -->
+
+    <section id="hero">
+
+        <!-- Central Portfolio Node -->
+        <div class="center-node">
+            <h1>Your Name</h1>
+            <p>Cloud Engineer • Developer • Builder</p>
+        </div>
+
+        <!-- Navigation Nodes -->
+        <div class="node about" data-target="about-section">
+            About
+        </div>
+
+        <div class="node skills" data-target="skills-section">
+            Skills
+        </div>
+
+        <div class="node projects" data-target="projects-section">
+            Projects
+        </div>
+
+        <div class="node resume" data-target="resume-section">
+            Resume
+        </div>
+
+        <div class="node contact" data-target="contact-section">
+            Contact
+        </div>
+
+        <div class="node challenge" data-target="challenge-section">
+            AWS Challenge
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         ABOUT
+         ========================= -->
+
+    <section id="about-section">
+
+        <div class="about-container">
+
+            <div class="about-text">
+
+                <h2>Your Name</h2>
+
+                <div class="about-divider"></div>
+
+                <p>
+                    Introduce yourself here. Describe your education,
+                    professional interests, or technical background.
+                </p>
+
+                <p>
+                    Describe your experience with cloud computing,
+                    software development, cybersecurity, or other
+                    relevant areas.
+                </p>
+
+                <p>
+                    This section can also be used to describe previous
+                    technical projects, internships, certifications,
+                    or other relevant experience.
+                </p>
+
+                <p>
+                    Finish with your current career interests or
+                    long-term technical goals.
+                </p>
+
+            </div>
+
+            <div class="about-image">
+
+                <!-- Replace with your own image if desired -->
+                <img
+                    src="assets/profile.jpg"
+                    alt="Profile image"
+                >
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         SKILLS
+         ========================= -->
+
+    <section id="skills-section">
+
+        <div class="skills-container">
+
+            <div class="skills-text">
+
+                <h2>Skills</h2>
+
+                <div class="skills-divider"></div>
+
+                <div class="skills-grid">
+
+                    <div class="skill-card">
+
+                        <h3>Programming</h3>
+
+                        <ul>
+                            <li>Programming Language</li>
+                            <li>Programming Language</li>
+                            <li>Programming Language</li>
+                            <li>Programming Language</li>
+                        </ul>
+
+                    </div>
+
+
+                    <div class="skill-card">
+
+                        <h3>Cloud</h3>
+
+                        <ul>
+                            <li>Cloud Platform</li>
+                            <li>Cloud Service</li>
+                            <li>Cloud Service</li>
+                            <li>Cloud Service</li>
+                        </ul>
+
+                    </div>
+
+
+                    <div class="skill-card">
+
+                        <h3>Security</h3>
+
+                        <ul>
+                            <li>Security Skill</li>
+                            <li>Security Skill</li>
+                            <li>Security Skill</li>
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         PROJECTS
+         ========================= -->
+
+    <section id="projects-section">
+
+        <h2>Projects</h2>
+
+        <!--
+            Add project cards here.
+
+            Example:
+            - Project title
+            - Project image
+            - Short description
+            - Link to source code or project
+        -->
+
+    </section>
+
+
+    <!-- =========================
+         RESUME
+         ========================= -->
+
+    <section id="resume-section">
+
+        <div class="resume-container">
+
+            <h2>Resume</h2>
+
+            <div class="resume-divider"></div>
+
+            <!--
+                Optional:
+                Place a resume PDF inside assets/ and update
+                the path below.
+            -->
+
+            <iframe
+                src="assets/resume.pdf"
+                class="resume-viewer">
+            </iframe>
+
+            <a
+                href="assets/resume.pdf"
+                download
+                class="download-btn">
+                Download Resume
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         CONTACT
+         ========================= -->
+
+    <section id="contact-section">
+
+        <div class="contact-container">
+
+            <div class="contact-text">
+
+                <h2>Contact</h2>
+
+                <div class="contact-divider"></div>
+
+                <p>
+                    Add your preferred contact information here.
+                </p>
+
+                <p>
+                    <a href="mailto:your-email@example.com">
+                        your-email@example.com
+                    </a>
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         AWS QUIZ / CHALLENGE
+         ========================= -->
+
+    <section id="challenge-section">
+
+        <h2>AWS Challenge</h2>
+
+        <div class="challenge-content">
+
+            <div class="challenge-intro">
+
+                <p>
+                    Test your AWS knowledge with an interactive
+                    quiz powered by an AWS backend.
+                </p>
+
+            </div>
+
+
+            <!-- Community Statistics -->
+
+            <div id="averageScore" class="score-display">
+
+                <h3>🏆 Community Stats</h3>
+
+                <div class="stats-grid">
+
+                    <div class="stat-item">
+
+                        <span
+                            class="stat-number"
+                            id="avgDisplay">
+                            Loading...
+                        </span>
+
+                        <span class="stat-label">
+                            Average Score
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-item">
+
+                        <span
+                            class="stat-number"
+                            id="attemptsDisplay">
+                            Loading...
+                        </span>
+
+                        <span class="stat-label">
+                            Total Attempts
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Quiz -->
+
+            <div id="quizContent">
+
+                <div
+                    id="loadingMessage"
+                    class="loading-message">
+
+                    <div class="spinner"></div>
+
+                    <p>
+                        Loading quiz questions...
+                    </p>
+
+                </div>
+
+
+                <!-- Questions are inserted here by JavaScript -->
+
+                <div
+                    id="questions"
+                    style="display: none;">
+                </div>
+
+
+                <div
+                    class="quiz-controls"
+                    id="quizControls"
+                    style="display: none;">
+
+                    <button
+                        id="submitBtn"
+                        onclick="submitQuiz()"
+                        disabled>
+                        Submit Quiz
+                    </button>
+
+
+                    <div id="progress">
+
+                        <div class="progress-bar">
+
+                            <div
+                                class="progress-fill"
+                                id="progressFill">
+                            </div>
+
+                        </div>
+
+                        <span id="progressText">
+                            Answer all questions to submit
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Quiz Results -->
+
+            <div
+                id="results"
+                style="display: none;">
+
+                <div class="results-container">
+
+                    <h3>
+                        🎉 Quiz Complete!
+                    </h3>
+
+                    <div class="score-result">
+
+                        <div class="score-circle">
+
+                            <span id="userPercentage">
+                            </span>%
+
+                        </div>
+
+                        <p>
+                            You scored
+                            <span id="userScore"></span>
+                            questions correctly!
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        onclick="restartQuiz()"
+                        class="restart-btn">
+                        Take Quiz Again
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         JAVASCRIPT
+         ========================= -->
+
+    <script src="js/cursor.js"></script>
+    <script src="js/constellation.js"></script>
+    <script src="js/navigation.js"></script>
+
+    <!-- Chatbot -->
+    <script src="js/chatbot.js"></script>
+
+
+    <!-- =========================
+         CHATBOT
+         ========================= -->
+
+    <div id="chatbot-container">
+
+        <div id="chatbot-toggle">
+            <span>💬</span>
+        </div>
+
+
+        <div
+            id="chatbot-window"
+            class="hidden">
+
+            <div id="chatbot-header">
+
+                <h3>
+                    Chat Assistant
+                </h3>
+
+                <button id="chatbot-close">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div id="chatbot-messages"></div>
+
+
+            <div id="chatbot-input-container">
+
+                <input
+                    type="text"
+                    id="chatbot-input"
+                    placeholder="Type your message..."
+                >
+
+                <button id="chatbot-send">
+                    Send
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
+```

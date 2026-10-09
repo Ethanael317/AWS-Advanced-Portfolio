@@ -1,0 +1,406 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Test your AWS cloud knowledge with this interactive quiz.">
+    <title>AWS Knowledge Quiz</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 16px;
+            background: #050b12;
+            color: #e6faff;
+            font-family: Arial, sans-serif;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 24px;
+            border: 1px solid rgba(0, 255, 255, 0.35);
+            border-radius: 12px;
+            background: rgba(8, 18, 30, 0.95);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.08);
+        }
+
+        h1, h2, h3 {
+            color: #00ffff;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .score-display {
+            padding: 16px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(0, 255, 255, 0.25);
+            border-radius: 8px;
+            background: rgba(0, 255, 255, 0.05);
+        }
+
+        .score-display h3 {
+            margin-top: 0;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 18px;
+            border: 1px solid #254052;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .question h3 {
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        .options {
+            margin-top: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 12px 0;
+            line-height: 1.5;
+        }
+
+        .option input {
+            margin-top: 5px;
+            accent-color: #00ffff;
+        }
+
+        .option label {
+            cursor: pointer;
+        }
+
+        button {
+            padding: 11px 20px;
+            border: 1px solid #00ffff;
+            border-radius: 6px;
+            background: #00bfc7;
+            color: #041015;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            background: #66ffff;
+            box-shadow: 0 0 12px rgba(0, 255, 255, 0.25);
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .status-message {
+            margin: 16px 0;
+            color: #b8d5df;
+            line-height: 1.5;
+        }
+
+        .error-message {
+            color: #ff9b9b;
+        }
+
+        #results {
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 16px 10px;
+            }
+
+            .quiz-container {
+                padding: 16px;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="quiz-container">
+        <h1>AWS Knowledge Quiz</h1>
+
+        <section
+            id="averageScore"
+            class="score-display"
+            aria-live="polite"
+        >
+            <h3>
+                Community Average:
+                <span id="avgDisplay">Loading...</span>
+            </h3>
+            <p>
+                Total Attempts:
+                <span id="attemptsDisplay">Loading...</span>
+            </p>
+        </section>
+
+        <div id="statusMessage" class="status-message" role="status"></div>
+
+        <section id="quizContent" hidden>
+            <div id="questions"></div>
+            <button id="submitButton" type="button" onclick="submitQuiz()">
+                Submit Quiz
+            </button>
+        </section>
+
+        <section id="results" hidden aria-live="polite">
+            <h2>Quiz Results</h2>
+            <p>
+                Your Score:
+                <strong>
+                    <span id="userScore"></span>/<span id="totalScore"></span>
+                </strong>
+            </p>
+            <button type="button" onclick="restartQuiz()">
+                Take Quiz Again
+            </button>
+        </section>
+    </main>
+
+    <script>
+        /*
+         * GitHub template configuration:
+         * Replace this placeholder with your own API Gateway base URL.
+         * Do not put API keys or other secrets in frontend code.
+         */
+        const API_BASE = "YOUR_API_GATEWAY_URL";
+
+        let questions = [];
+        let isSubmitting = false;
+
+        const elements = {
+            questions: document.getElementById("questions"),
+            average: document.getElementById("avgDisplay"),
+            attempts: document.getElementById("attemptsDisplay"),
+            quizContent: document.getElementById("quizContent"),
+            results: document.getElementById("results"),
+            userScore: document.getElementById("userScore"),
+            totalScore: document.getElementById("totalScore"),
+            status: document.getElementById("statusMessage"),
+            submitButton: document.getElementById("submitButton")
+        };
+
+        function setStatus(message, isError = false) {
+            elements.status.textContent = message;
+            elements.status.className = isError
+                ? "status-message error-message"
+                : "status-message";
+        }
+
+        function validateApiConfiguration() {
+            if (!API_BASE || API_BASE === "YOUR_API_GATEWAY_URL") {
+                throw new Error(
+                    "The quiz API has not been configured. Set API_BASE in quiz.html."
+                );
+            }
+        }
+
+        async function fetchJson(url, options = {}) {
+            const response = await fetch(url, options);
+
+            if (!response.ok) {
+                throw new Error(`API request failed (${response.status}).`);
+            }
+
+            return response.json();
+        }
+
+        async function loadQuiz() {
+            elements.quizContent.hidden = true;
+            setStatus("Loading quiz...");
+
+            try {
+                validateApiConfiguration();
+
+                // Load questions from the API.
+                const questionData = await fetchJson(
+                    `${API_BASE}/quiz/questions`
+                );
+
+                if (!Array.isArray(questionData) || questionData.length === 0) {
+                    throw new Error("No quiz questions were returned by the API.");
+                }
+
+                questions = questionData;
+                displayQuestions();
+
+                elements.quizContent.hidden = false;
+                setStatus("");
+
+                // Load the community average independently.
+                try {
+                    await loadAverageScore();
+                } catch (error) {
+                    console.error("Error loading community average:", error);
+                    elements.average.textContent = "Unavailable";
+                    elements.attempts.textContent = "Unavailable";
+                }
+            } catch (error) {
+                console.error("Error loading quiz:", error);
+                setStatus(
+                    `Unable to load the quiz. ${error.message}`,
+                    true
+                );
+            }
+        }
+
+        async function loadAverageScore() {
+            const avgData = await fetchJson(`${API_BASE}/quiz/average`);
+
+            elements.average.textContent =
+                avgData.average != null ? `${avgData.average}%` : "N/A";
+
+            elements.attempts.textContent =
+                avgData.totalAttempts != null
+                    ? avgData.totalAttempts
+                    : "0";
+        }
+
+        function displayQuestions() {
+            elements.questions.replaceChildren();
+
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.className = "question";
+
+                const heading = document.createElement("h3");
+                heading.textContent =
+                    `Question ${index + 1}: ${question.question}`;
+
+                const optionsDiv = document.createElement("div");
+                optionsDiv.className = "options";
+
+                question.options.forEach((option, optionIndex) => {
+                    const optionDiv = document.createElement("div");
+                    optionDiv.className = "option";
+
+                    const input = document.createElement("input");
+                    input.type = "radio";
+                    input.name = `q${index}`;
+                    input.value = optionIndex;
+                    input.id = `q${index}_${optionIndex}`;
+
+                    const label = document.createElement("label");
+                    label.htmlFor = input.id;
+                    label.textContent = option;
+
+                    optionDiv.append(input, label);
+                    optionsDiv.appendChild(optionDiv);
+                });
+
+                questionDiv.append(heading, optionsDiv);
+                elements.questions.appendChild(questionDiv);
+            });
+        }
+
+        async function submitQuiz() {
+            if (isSubmitting || questions.length === 0) {
+                return;
+            }
+
+            // Ensure the user answers every question.
+            const unanswered = questions.findIndex((question, index) => {
+                return !document.querySelector(
+                    `input[name="q${index}"]:checked`
+                );
+            });
+
+            if (unanswered !== -1) {
+                setStatus(
+                    `Please answer Question ${unanswered + 1} before submitting.`,
+                    true
+                );
+                return;
+            }
+
+            let score = 0;
+
+            questions.forEach((question, index) => {
+                const selected = document.querySelector(
+                    `input[name="q${index}"]:checked`
+                );
+
+                if (
+                    selected &&
+                    Number.parseInt(selected.value, 10) === question.correctAnswer
+                ) {
+                    score++;
+                }
+            });
+
+            isSubmitting = true;
+            elements.submitButton.disabled = true;
+            setStatus("Submitting your score...");
+
+            try {
+                const percentage = (score / questions.length) * 100;
+
+                await fetchJson(`${API_BASE}/quiz/submit`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        score: percentage,
+                        totalQuestions: questions.length,
+                        userAgent: navigator.userAgent
+                    })
+                });
+
+                elements.userScore.textContent = score;
+                elements.totalScore.textContent = questions.length;
+                elements.quizContent.hidden = true;
+                elements.results.hidden = false;
+                setStatus("Your score has been submitted.");
+
+                // Refresh the community average after submission.
+                try {
+                    await loadAverageScore();
+                } catch (error) {
+                    console.error("Error refreshing average score:", error);
+                }
+            } catch (error) {
+                console.error("Error submitting quiz:", error);
+                setStatus(
+                    "Your score could not be submitted. Please try again.",
+                    true
+                );
+            } finally {
+                isSubmitting = false;
+                elements.submitButton.disabled = false;
+            }
+        }
+
+        async function restartQuiz() {
+            elements.results.hidden = true;
+            elements.quizContent.hidden = true;
+            await loadQuiz();
+        }
+
+        // Load the quiz when the page opens.
+        window.addEventListener("DOMContentLoaded", loadQuiz);
+    </script>
+</body>
+</html>
